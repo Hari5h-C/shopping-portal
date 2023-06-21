@@ -1,39 +1,41 @@
-pipeline{
-
-    agent any
-
-// uncomment the following lines by removing /* and */ to enable
-    tools{
-       nodejs 'nodejs' 
+pipeline {
+  agent any
+  stages {
+    stage('build') {
+      steps {
+        echo 'this is the build-the-app job'
+        sh 'npm install'
+      }
     }
-    
 
-    stages{
-        stage('build'){
-            steps{
-                echo 'this is the build-the-app job'
-                sh 'npm install'
-            }
-        }
-        stage('test'){
-            steps{
-                echo 'this is the test-the-app job'
-                sh 'npm test'
-            }
-        }
-        stage('package'){
-            steps{
-                echo 'this is the package-the-app job'
-                sh 'npm run package'                
-            }
-        }
+    stage('test') {
+      steps {
+        echo 'this is the test-the-app job'
+        sh 'npm test'
+      }
     }
-    
-    post{
-        always{
-            echo 'My first pipeline has completed...'
-        }
-        
+
+    stage('package') {
+      steps {
+        echo 'this is the package-the-app job'
+        sh 'npm run package'
+      }
     }
-    
+
+    stage('Archive') {
+      steps {
+        archiveArtifacts '**/distribution/*.zip'
+      }
+    }
+
+  }
+  tools {
+    nodejs 'nodejs'
+  }
+  post {
+    always {
+      echo 'My first pipeline has completed...'
+    }
+
+  }
 }
